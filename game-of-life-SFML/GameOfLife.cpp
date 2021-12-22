@@ -12,10 +12,12 @@ GameOfLife::GameOfLife(sf::RenderWindow& win, float a) {
     rows = std::ceil(winSize.y / cellSize);
 	game.resize(cols, std::vector<bool>(rows, false));
     nextGen.resize(cols, std::vector<bool>(rows, false));
+    reset = game;
 }
 
 void GameOfLife::ClearGame() {
     game = reset;
+    gameState = false;
 }
 
 sf::Vector2i GameOfLife::getDimensions() {

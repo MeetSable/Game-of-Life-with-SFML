@@ -12,7 +12,7 @@
 int main() {
     //main game window
     int screenWidth = 1920, screenHeight = 1080;
-	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "SFML OP", sf::Style::Fullscreen);
+	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "SFML OP", sf::Style::Default);
     
 
     //loading font
@@ -25,8 +25,7 @@ int main() {
     auto dimensions = game.getDimensions();
 
     //test
-    sf::Text text("Space to Play/Pause.\nUse mouse to add/remove cells \nescape to exit \nLeft Control to clear \nColumns = "+std::to_string(dimensions.x) + ", Rows = " + std::to_string(dimensions.y), font, 20);
-    text.setFillColor(sf::Color(255,255,255,150));   
+  
 
     
 
@@ -56,6 +55,7 @@ int main() {
                 break;
 
             case sf::Event::Closed:
+                window.close();
                 break;
 
             default:
@@ -70,6 +70,17 @@ int main() {
 
         window.clear();
         game.DisplayGrid(window);
+
+        std::string state = game.gameState ? "Alive" : "Dead";
+        std::string s = 
+              "Space to Play/Pause. Current State = " + state
+            + "\nUse mouse to add/remove cells" 
+            + "\nescape to exit" 
+            + "\nLeft Control to clear" 
+            + "\nColumns = " + std::to_string(dimensions.x) 
+            + ", Rows = " + std::to_string(dimensions.y);
+        sf::Text text(s, font, 20);
+        text.setFillColor(sf::Color(255, 255, 255, 150));
         window.draw(text);
         window.display();
     }
