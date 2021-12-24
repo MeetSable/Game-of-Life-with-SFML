@@ -68,8 +68,8 @@ void GameOfLife::DisplayGrid()
 {
     //intializing variables
     
-    /*auto winSize = (sf::Vector2f)win.getView().getSize();
-    int numLines = rows + cols - 2;
+    auto winSize = (sf::Vector2f)win.getView().getSize();
+    /*int numLines = rows + cols - 2;
     sf::VertexArray grid(sf::Lines, 2 * (numLines));
 
     for (int i = 0; i < cols - 1; i++) {
@@ -83,8 +83,14 @@ void GameOfLife::DisplayGrid()
     }
 
     win.draw(grid); */
+    sf::VertexArray gameSqr(sf::LinesStrip, 4);
+    gameSqr[0].position = sf::Vector2f(0        , 0        );
+    gameSqr[1].position = sf::Vector2f(0        , winSize.y);
+    gameSqr[2].position = sf::Vector2f(winSize.x, winSize.y);
+    gameSqr[3].position = sf::Vector2f(winSize.x, 0        );
+    win.draw(gameSqr);
 
-    sf::VertexArray liveCells(sf::Quad, 4 * numOfLiveCells);
+    sf::VertexArray liveCells(sf::Quads, 4 * numOfLiveCells);
     std::vector<sf::Vector2f> sqr(4);
     int BufferIndex = 0;
     for (int i = 0; i < cols; i++)
@@ -113,7 +119,7 @@ void GameOfLife::DrawShape(int x, int y)
 
 void GameOfLife::SetAliveOrDead(float x, float y)
 {
-    auto winSize = (sf::Vector2f)win.getSize();
+    auto winSize = (sf::Vector2f)win.getView().getSize();
     int i = (int)std::floor(cols * x / winSize.x);
     int j = (int)std::floor(rows * y / winSize.y);
     game[i][j] = !game[i][j];
