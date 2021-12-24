@@ -11,7 +11,7 @@
 
 int main() {
     //main game window
-    int screenWidth = 1920, screenHeight = 1080;
+    int screenWidth = 1280, screenHeight = 720;
 	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "SFML OP", sf::Style::Default);
     
 
@@ -21,7 +21,7 @@ int main() {
     if (!font.loadFromFile("font.ttf")) { std::cout << "failed to load font \n";  return -1; }
 
     //ini game
-    GameOfLife game(window, 3);
+    GameOfLife game(window, 5);
     auto dimensions = game.getDimensions();
 
     //test
@@ -40,7 +40,7 @@ int main() {
                 auto mouseInp = event.mouseButton;
                 //std::cout << mouseInp.button << std::endl;
                 //std::cout << "coords " << mouseInp.x << " " << mouseInp.y << std::endl;
-                game.SetAliveOrDead(window, mouseInp.x, mouseInp.y);
+                game.SetAliveOrDead(mouseInp.x, mouseInp.y);
                 break;
 
             case sf::Event::KeyPressed:
@@ -69,7 +69,7 @@ int main() {
         }
 
         window.clear();
-        game.DisplayGrid(window);
+        game.DisplayGrid();
 
         std::string state = game.gameState ? "Alive" : "Dead";
         std::string s = 
