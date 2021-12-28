@@ -151,14 +151,12 @@
   <ItemGroup>
     <ClInclude Include="GameOfLife.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
-    <ClInclude Include="resource2.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="game-of-life-SFML.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="details.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game-of-life-SFML.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource2.h"
+#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 1 TEXTINCLUDE 
 BEGIN
-    "resource2.h\0"
+    "resource.h\0"
 END
 
 2 TEXTINCLUDE 
@@ -53,6 +53,16 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "details.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "Z:\\dev\\All-the-codes\\CPP-gamedev\\Game-of-Life-with-SFML\\game-of-life-SFML\\button.png"
+
+IDB_PNG2                PNG                     "button_clicked.png"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
