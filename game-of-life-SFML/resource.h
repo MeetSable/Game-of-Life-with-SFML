@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by game-of-life-SFML.rc
 //
-#define IDB_PNG1                        101
+#define IDI_ICON1                       101
 
 // Next default values for new objects
 // 
