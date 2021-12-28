@@ -17,43 +17,52 @@ private:
     sf::RenderWindow window;
     sf::View GameView;
     sf::View RulesView;
+    sf::View guiView;
     sf::Font font;
     sf::Vector2i dimensions;
 
-    GameOfLife* gameOfLife;
+    GameOfLife gameOfLife;
     int cellSize;
 
     std::chrono::steady_clock::time_point start;
     std::chrono::duration<double> d;
     double fps, fps_temp;
+
 public:
-    Game();
+    Game(float);
     void init();
     void run();
     void processEvent();
     void draw();
 };
 
-Game::Game() {
+Game::Game(float a):gameOfLife(window, a), cellSize(a) {
     screenWidth = 1280, screenHeight = 720;
     window.create(sf::VideoMode(screenWidth, screenHeight), "SFML OP", sf::Style::Default);
 
     gameWidth = 1920, gameHeight = 1080;
     GameView.reset(sf::FloatRect(0, 0, gameWidth, gameHeight));
     GameView.setViewport(sf::FloatRect(0, 0, 4.f / 5.f, 4.f / 5.f));
-    cellSize = 15;
+    window.setView(GameView);
+    gameOfLife.CreateGame();
 
     RulesView.reset(sf::FloatRect(0, 0, screenWidth, screenHeight));
     RulesView.setViewport(sf::FloatRect(0, 4.f / 5.f, 1, 1));
+
+    guiView.reset(sf::FloatRect(0, 0, screenWidth*1.f/5.f, screenHeight));
+    guiView.setViewport(sf::FloatRect(4.f/5.f, 0, 1, 1));
 
     fps = 0, fps_temp = 0;
 }
 
 void Game::init() {
     if (!font.loadFromFile("font.ttf")) { std::cout << "failed to load font \n";  return; }
+    
+
+    
+
     window.setView(GameView);
-    gameOfLife = new GameOfLife(window, cellSize);
-    dimensions = gameOfLife->getDimensions();
+    dimensions = gameOfLife.getDimensions();
     start = std::chrono::high_resolution_clock::now();
 }
 
@@ -62,8 +71,8 @@ void Game::run() {
     while (window.isOpen()) {
         processEvent();
 
-        if (gameOfLife->gameState) {
-            gameOfLife->ComputeNextGen();
+        if (gameOfLife.gameState) {
+            gameOfLife.ComputeNextGen();
             d = std::chrono::high_resolution_clock::now() - start;
             fps_temp++;
             if (d.count() > 1.f) {
@@ -91,7 +100,7 @@ void Game::processEvent() {
                 //std::cout << mouseInp.button << std::endl;
                 //std::cout << "coords " << .x << " " << mouseInp.y << std::endl;
                 window.setView(GameView);
-                gameOfLife->SetAliveOrDead(gameCords.x, gameCords.y);
+                gameOfLife.SetAliveOrDead(gameCords.x, gameCords.y);
             }
             break;
         }
@@ -99,10 +108,10 @@ void Game::processEvent() {
         case sf::Event::KeyPressed:
         {
             if (event.key.code == sf::Keyboard::Space)
-                gameOfLife->gameState = !gameOfLife->gameState;
+                gameOfLife.gameState = !gameOfLife.gameState;
 
             if (event.key.code == sf::Keyboard::LControl)
-                gameOfLife->ClearGame();
+                gameOfLife.ClearGame();
 
             if (event.key.code == sf::Keyboard::Escape)
                 window.close();
@@ -125,10 +134,10 @@ void Game::draw() {
     window.clear();
 
     window.setView(GameView);
-    gameOfLife->DisplayGrid();
+    gameOfLife.DisplayGrid();
 
     window.setView(RulesView);
-    std::string state = gameOfLife->gameState ? "Alive" : "Dead";
+    std::string state = gameOfLife.gameState ? "Alive" : "Dead";
     std::string s =
         "Space to Play/Pause. Current State = " + state
         + "\nUse mouse to add/remove cells"
@@ -140,13 +149,14 @@ void Game::draw() {
     sf::Text text(s, font, 20);
     text.setFillColor(sf::Color(255, 255, 255));
     window.draw(text);
+
     window.display();
 
 
 }
 
 int main() {
-    Game game;  
+    Game game(10);
     game.run();
 	return 0;
 }

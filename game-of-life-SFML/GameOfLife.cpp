@@ -5,12 +5,13 @@
 
 #define MOD(a,b) (b + a%b)%b
 
-GameOfLife::GameOfLife(sf::RenderWindow& window, float a) : win(window) {
-    cellSize = a;
+GameOfLife::GameOfLife(sf::RenderWindow& window, float a) : win(window), cellSize(a) {}
+
+void GameOfLife::CreateGame() {
     auto winSize = win.getView().getSize();
     cols = std::ceil(winSize.x / cellSize);
     rows = std::ceil(winSize.y / cellSize);
-	game.resize(cols, std::vector<bool>(rows, false));
+    game.resize(cols, std::vector<bool>(rows, false));
     nextGen.resize(cols, std::vector<bool>(rows, false));
     numOfLiveCells = 0;
     reset = game;

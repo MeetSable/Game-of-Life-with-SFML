@@ -20,6 +20,7 @@ public:
 
 
 	GameOfLife(sf::RenderWindow&, float);
+	void CreateGame();
 	void ClearGame();
 	sf::Vector2i getDimensions();
 	void ComputeNextGen();
