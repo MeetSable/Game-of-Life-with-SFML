@@ -7,14 +7,21 @@
 
 GameOfLife::GameOfLife(sf::RenderWindow& window, float a) : win(window), cellSize(a) {}
 
-void GameOfLife::CreateGame() {
-    auto winSize = win.getView().getSize();
-    cols = std::ceil(winSize.x / cellSize);
-    rows = std::ceil(winSize.y / cellSize);
+void GameOfLife::CreateGame(sf::View& gameView, sf::View& guiView) {
+    gameDimensions = gameView.getSize();
+    cols = std::ceil(gameDimensions.x / cellSize);
+    rows = std::ceil(gameDimensions.y / cellSize);
     game.resize(cols, std::vector<bool>(rows, false));
     nextGen.resize(cols, std::vector<bool>(rows, false));
     numOfLiveCells = 0;
     reset = game;
+
+    guiDimensions = sf::Vector2f(guiView.getSize().x / 5.f, guiView.getSize().y);
+    patterns = { pattern("Single \nSquare", 1, 1, {1}, true, guiDimensions),
+                pattern("Glider", 3, 3, {1, 0, 0,   0, 1, 1,   1, 1, 0,}, guiDimensions) };
+    for (int i = 1; i < patterns.size(); i++) {
+        patterns[i].area.top = patterns[i - 1].area.top + 100.f;
+    }
 }
 
 void GameOfLife::ClearGame() {
@@ -118,13 +125,22 @@ void GameOfLife::DrawShape(int x, int y)
     win.draw(rect);
 }
 
-void GameOfLife::SetAliveOrDead(float x, float y)
+void GameOfLife::SetShape(float x, float y)
 {
     auto winSize = (sf::Vector2f)win.getView().getSize();
     int i = (int)std::floor(cols * x / winSize.x);
     int j = (int)std::floor(rows * y / winSize.y);
-    game[i][j] = !game[i][j];
-    numOfLiveCells += game[i][j] ? 1 : -1;
+    int h = patterns[current_shape].y, w = patterns[current_shape].x;
+    int h2 = floor(h / 2.f), w2 = floor(w / 2.f);
+    for (int it = 0; it < h; it++)
+        for (int jt = 0; jt < w; jt++)
+        {
+            bool temp = patterns[current_shape].shp[it + 3*jt];
+            if (game[MOD(i + it - h2, cols)][MOD(j + jt - w2, rows)] ^ temp) {
+                numOfLiveCells += temp ? 1 : -1;
+                game[MOD(i + it - h2, cols)][MOD(j + jt - w2, rows)] = temp;
+            }
+        }
 }
 
 std::vector<sf::Vector2f> GameOfLife::CordsOfSqr(int x, int y) {
@@ -135,4 +151,32 @@ std::vector<sf::Vector2f> GameOfLife::CordsOfSqr(int x, int y) {
     sqr[2] = sf::Vector2f(xf + cellSize, yf           );
     sqr[3] = sf::Vector2f(xf + cellSize, yf + cellSize);
     return sqr;
+}
+
+void GameOfLife::DisplayguiGrid(sf::Font& font) {
+    int size = patterns.size();
+    //std::cout << size << std::endl;
+    
+    auto viewSize = win.getView().getSize();
+    auto gridSize = sf::Vector2f(viewSize.x/5.f, 100.f);
+
+    //std::cout << gridSize.x << " " << gridSize.y << std::endl;
+    int numOfLines = 2 + size;
+    sf::VertexArray grid(sf::Lines, numOfLines * 2);
+    //h Lines
+    grid[0].position = { 0         , 0 };
+    grid[1].position = { 0         , viewSize.y };
+    //grid[2].position = { gridSize.x, 0          };
+    //grid[3].position = { gridSize.x, viewSize.y };
+
+    for (int i = 0; i <= size; i++) {
+        grid[(i + 1) * 2].position = { 0, i * gridSize.y};
+        grid[(i + 1) * 2 + 1].position = { gridSize.x, i * gridSize.y};
+    }
+    win.draw(grid);
+    for (int i = 0; i < size; i++) {
+        sf::Text text(patterns[i].name, font, 20);
+        text.setPosition(sf::Vector2f(-text.getLocalBounds().width/2.f + gridSize.x/2.f, -text.getLocalBounds().height / 2.f + gridSize.y * i + gridSize.y / 2.f));
+        win.draw(text);
+    }
 }
