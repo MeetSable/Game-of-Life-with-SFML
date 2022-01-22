@@ -17,11 +17,17 @@ void GameOfLife::CreateGame(sf::View& gameView, sf::View& guiView) {
     reset = game;
 
     guiDimensions = sf::Vector2f(guiView.getSize().x / 5.f, guiView.getSize().y);
-    patterns = { pattern("Single \nSquare", 1, 1, {1}, true, guiDimensions),
-                pattern("Glider", 3, 3, {1, 0, 0,   0, 1, 1,   1, 1, 0,}, guiDimensions) };
+    patterns = { pattern("Single \nSquare", 1, 1, {1}, guiDimensions),
+                pattern("Glider", 3, 3, {1,0,0, 0,1,1, 1,1,0}, guiDimensions),
+                pattern("The R-pentomino", 3, 3, {0,1,1, 1,1,0, 0,1,0}, guiDimensions) };
     for (int i = 1; i < patterns.size(); i++) {
         patterns[i].area.top = patterns[i - 1].area.top + 100.f;
     }
+    total_shapes = patterns.size();
+    guiRect = patterns[0].area;
+    currentSelected.setSize(sf::Vector2f(guiRect.width, guiRect.height));
+    currentSelected.setPosition(sf::Vector2f(guiRect.left, guiRect.top));
+    currentSelected.setFillColor(sf::Color(255, 255, 255, 50));
 }
 
 void GameOfLife::ClearGame() {
@@ -174,9 +180,25 @@ void GameOfLife::DisplayguiGrid(sf::Font& font) {
         grid[(i + 1) * 2 + 1].position = { gridSize.x, i * gridSize.y};
     }
     win.draw(grid);
+
     for (int i = 0; i < size; i++) {
         sf::Text text(patterns[i].name, font, 20);
         text.setPosition(sf::Vector2f(-text.getLocalBounds().width/2.f + gridSize.x/2.f, -text.getLocalBounds().height / 2.f + gridSize.y * i + gridSize.y / 2.f));
         win.draw(text);
     }
+    
+    win.draw(currentSelected);
 }
+
+void GameOfLife::ChangeShape(sf::Vector2f mousePosition)
+{
+    for (int i = 0; i < total_shapes; i++) {
+        if (patterns[i].area.contains(mousePosition)) {
+            current_shape = i;
+            currentSelected.setPosition(sf::Vector2f(guiRect.left, guiRect.height * i));
+            std::cout << patterns[i].name << std::endl;
+            break;
+        }
+    }
+}
+

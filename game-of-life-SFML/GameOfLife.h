@@ -7,10 +7,8 @@ struct pattern {
 	std::string name;
 	int x, y;
 	std::vector<bool> shp;
-	bool state;
 	sf::Rect<float> area;
-	pattern(std::string name, int x, int y, std::vector<bool> arr, bool state, sf::Vector2f dim) :name(name), x(x), y(y), shp(arr), state(state), area(0,0,dim.x,100.f) {}
-	pattern(std::string name, int x, int y, std::vector<bool> arr, sf::Vector2f dim) :name(name), x(x), y(y), shp(arr), state(false), area(0, 0, dim.x, 100.f) {}
+	pattern(std::string name, int x, int y, std::vector<bool> arr, sf::Vector2f dim) :name(name), x(x), y(y), shp(arr), area(0, 0, dim.x, 100.f) {}
 };
 
 class GameOfLife
@@ -23,7 +21,10 @@ private:
 	std::vector<sf::Vector2f> CordsOfSqr(int, int);
 	std::vector<pattern> patterns;
 
-	int current_shape = 1;
+	int current_shape = 0;
+	int total_shapes = 2;
+	sf::Rect<float> guiRect;
+	sf::RectangleShape currentSelected;
 
 	sf::Vector2f guiDimensions, gameDimensions;
 
@@ -44,5 +45,6 @@ public:
 	void DrawShape(int, int);
 	void SetShape(float, float);
 	void DisplayguiGrid(sf::Font&);
+	void ChangeShape(sf::Vector2f);
 };
 

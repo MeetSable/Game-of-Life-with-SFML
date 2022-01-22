@@ -8,7 +8,6 @@
 
 #include "GameOfLife.h"
 
-
 class Game {
 private:
     int screenWidth, screenHeight;
@@ -108,7 +107,9 @@ void Game::processEvent() {
                 }
             }
             else if (guiRect.contains((sf::Vector2f)mousePosition)) {
-                std::cout << "we're in gui\n";
+                //std::cout << "we're in gui\n";
+                auto positonGui = window.mapPixelToCoords(mousePosition, guiView);
+                gameOfLife.ChangeShape((sf::Vector2f)positonGui);
             }
             break;
         }
@@ -167,7 +168,7 @@ void Game::draw() {
 }
 
 int main() {
-    Game game(5);
+    Game game(20);
     game.run();
 	return 0;
 }
