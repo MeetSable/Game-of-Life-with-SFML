@@ -5,10 +5,10 @@
 
 struct pattern {
 	std::string name;
-	int x, y;
+	int w, h;
 	std::vector<bool> shp;
 	sf::Rect<float> area;
-	pattern(std::string name, int x, int y, std::vector<bool> arr, sf::Vector2f dim) :name(name), x(x), y(y), shp(arr), area(0, 0, dim.x, 100.f) {}
+	pattern(std::string name, int x, int y, std::vector<bool> arr, sf::Vector2f dim) :name(name), w(x), h(y), shp(arr), area(0, 0, dim.x, 100.f) {}
 };
 
 class GameOfLife

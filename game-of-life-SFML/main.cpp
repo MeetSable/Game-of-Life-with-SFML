@@ -65,6 +65,7 @@ void Game::init() {
     window.setView(GameView);
     dimensions = gameOfLife.getDimensions();
     start = std::chrono::high_resolution_clock::now();
+    //window.setFramerateLimit(60);
 }
 
 void Game::run() {
@@ -88,14 +89,32 @@ void Game::run() {
 
 void Game::processEvent() {
     sf::Event event;
-    while (window.pollEvent(event))
+    while (window.pollEvent(event) && event.type!=sf::Event::MouseMoved)
     {
         switch (event.type)
         {
+        
+        case sf::Event::Resized:
+        {
+            auto size = window.getSize();
+
+            //GameView.setViewport(sf::FloatRect(0, 0, 4.f / 5.f, 4.f / 5.f));
+            gameRect = sf::FloatRect(0, 0, size.x * 4.f / 5.f, size.y * 4.f / 5.f);
+
+            //RulesView.setViewport(sf::FloatRect(0, 4.f / 5.f, 1, 1));
+            rulesRect = sf::FloatRect(0, size.y * 4.f / 5.f, size.x * 4.f / 5.f, size.y * 1.f / 5.f);
+
+            //guiView.setViewport(sf::FloatRect(4.f / 5.f, 0, 1, 1));
+            guiRect = sf::FloatRect(size.x * 4.f / 5.f, 0, size.x * 1.f / 5.f, size.y);
+
+            break;
+        }
+
         case sf::Event::MouseButtonPressed:
         {
             auto mousePosition = sf::Mouse::getPosition(window);
             if (gameRect.contains((sf::Vector2f)mousePosition)) {
+                //std::cout << "Game View\n";
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     
                     auto gameCords = window.mapPixelToCoords(mousePosition, GameView);
@@ -107,7 +126,7 @@ void Game::processEvent() {
                 }
             }
             else if (guiRect.contains((sf::Vector2f)mousePosition)) {
-                //std::cout << "we're in gui\n";
+                //std::cout << "Gui View\n";
                 auto positonGui = window.mapPixelToCoords(mousePosition, guiView);
                 gameOfLife.ChangeShape((sf::Vector2f)positonGui);
             }
@@ -157,7 +176,7 @@ void Game::draw() {
         + "\nLeft Control to clear"
         + "\nColumns = " + std::to_string(dimensions.x)
         + ", Rows = " + std::to_string(dimensions.y) + "\n"
-        + "FPS: " + std::to_string(fps);
+        + "Gen per second: " + std::to_string(fps);
     sf::Text text(s, font, 20);
     text.setFillColor(sf::Color(255, 255, 255));
     window.draw(text);
@@ -168,7 +187,7 @@ void Game::draw() {
 }
 
 int main() {
-    Game game(20);
+    Game game(5);
     game.run();
 	return 0;
 }

@@ -18,8 +18,27 @@ void GameOfLife::CreateGame(sf::View& gameView, sf::View& guiView) {
 
     guiDimensions = sf::Vector2f(guiView.getSize().x / 5.f, guiView.getSize().y);
     patterns = { pattern("Single \nSquare", 1, 1, {1}, guiDimensions),
-                pattern("Glider", 3, 3, {1,0,0, 0,1,1, 1,1,0}, guiDimensions),
-                pattern("The R-pentomino", 3, 3, {0,1,1, 1,1,0, 0,1,0}, guiDimensions) };
+                pattern("Glider",           3, 3, {1,0,0,
+                                                   0,1,1,
+                                                   1,1,0}, guiDimensions),
+                pattern("The R-pentomino", 3, 3,  {0,1,1,
+                                                   1,1,0,
+                                                   0,1,0}, guiDimensions),
+                pattern("Die-Hard",        8, 3, {0,0,0,0,0,0,1,0,
+                                                  1,1,0,0,0,0,0,0,
+                                                  0,1,0,0,0,1,1,1}, guiDimensions),
+                pattern("Acorn",           7, 3, {0,1,0,0,0,0,0,
+                                                  0,0,0,1,0,0,0,
+                                                  1,1,0,0,1,1,1 }, guiDimensions),
+                pattern("Glider-Gun",      36, 9, {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                                                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                                                   0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+                                                   0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+                                                   1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                                   1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                                                   0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                                                   0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                                   0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,}, guiDimensions), };
     for (int i = 1; i < patterns.size(); i++) {
         patterns[i].area.top = patterns[i - 1].area.top + 100.f;
     }
@@ -134,17 +153,17 @@ void GameOfLife::DrawShape(int x, int y)
 void GameOfLife::SetShape(float x, float y)
 {
     auto winSize = (sf::Vector2f)win.getView().getSize();
-    int i = (int)std::floor(cols * x / winSize.x);
-    int j = (int)std::floor(rows * y / winSize.y);
-    int h = patterns[current_shape].y, w = patterns[current_shape].x;
-    int h2 = floor(h / 2.f), w2 = floor(w / 2.f);
-    for (int it = 0; it < h; it++)
-        for (int jt = 0; jt < w; jt++)
+    int i = (int)std::ceil(cols * x / winSize.x);
+    int j = (int)std::ceil(rows * y / winSize.y);
+    int h = patterns[current_shape].h, w = patterns[current_shape].w;
+    int h2 = std::ceil(h / 2.f), w2 = std::ceil(w / 2.f);
+    for (int it = 0; it < w; it++)
+        for (int jt = 0; jt < h; jt++)
         {
-            bool temp = patterns[current_shape].shp[it + 3*jt];
-            if (game[MOD(i + it - h2, cols)][MOD(j + jt - w2, rows)] ^ temp) {
+            bool temp = patterns[current_shape].shp[it + w*jt];
+            if (game[MOD(i + it - w2, cols)][MOD(j + jt - h2, rows)] ^ temp) {
                 numOfLiveCells += temp ? 1 : -1;
-                game[MOD(i + it - h2, cols)][MOD(j + jt - w2, rows)] = temp;
+                game[MOD(i + it - w2, cols)][MOD(j + jt - h2, rows)] = temp;
             }
         }
 }
@@ -167,17 +186,17 @@ void GameOfLife::DisplayguiGrid(sf::Font& font) {
     auto gridSize = sf::Vector2f(viewSize.x/5.f, 100.f);
 
     //std::cout << gridSize.x << " " << gridSize.y << std::endl;
-    int numOfLines = 2 + size;
+    int numOfLines = 3 + size;
     sf::VertexArray grid(sf::Lines, numOfLines * 2);
     //h Lines
-    grid[0].position = { 0         , 0 };
-    grid[1].position = { 0         , viewSize.y };
-    //grid[2].position = { gridSize.x, 0          };
-    //grid[3].position = { gridSize.x, viewSize.y };
+    grid[0].position = { 1         , 0 };
+    grid[1].position = { 1         , viewSize.y };
+    grid[2].position = { gridSize.x, 0          };
+    grid[3].position = { gridSize.x, viewSize.y };
 
     for (int i = 0; i <= size; i++) {
-        grid[(i + 1) * 2].position = { 0, i * gridSize.y};
-        grid[(i + 1) * 2 + 1].position = { gridSize.x, i * gridSize.y};
+        grid[(i + 2) * 2].position = { 0, i * gridSize.y};
+        grid[(i + 2) * 2 + 1].position = { gridSize.x, i * gridSize.y};
     }
     win.draw(grid);
 
@@ -196,7 +215,7 @@ void GameOfLife::ChangeShape(sf::Vector2f mousePosition)
         if (patterns[i].area.contains(mousePosition)) {
             current_shape = i;
             currentSelected.setPosition(sf::Vector2f(guiRect.left, guiRect.height * i));
-            std::cout << patterns[i].name << std::endl;
+            //std::cout << patterns[i].name << std::endl;
             break;
         }
     }
